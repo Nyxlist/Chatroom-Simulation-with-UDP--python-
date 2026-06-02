@@ -1,9 +1,3 @@
-"""
-UDP Chatroom Server
-- Menerima pesan dari client dan mem-broadcast ke semua client yang terhubung
-- Menampilkan IP:Port pengirim beserta pesannya
-"""
-
 import socket
 
 HOST = '0.0.0.0'

@@ -2,7 +2,9 @@
 UDP Chatroom Client
 - Mengirim pesan ke server dan menerima broadcast dari client lain
 - Menampilkan format: IP * Port > pesan
-- Jalankan: python chat.py
+- Bisa bind ke IP/port tertentu untuk simulasi multi-IP di 1 komputer
+- Jalankan: python chat.py [CLIENT_IP] [CLIENT_PORT]
+  Contoh:  python chat.py 192.168.1.11 10005
 """
 
 import socket
@@ -10,7 +12,7 @@ import threading
 import sys
 
 # Konfigurasi server - ubah sesuai IP server
-SERVER_IP = '127.0.0.1'  # Ganti dengan IP server (misal: 192.168.1.1)
+SERVER_IP = '127.0.0.1'
 SERVER_PORT = 9999
 
 
@@ -23,7 +25,6 @@ def receive_messages(client_socket):
             print(f"\n{message}")
             print(">> ", end="", flush=True)
         except OSError:
-            # Socket ditutup
             break
         except Exception as e:
             print(f"\n[ERROR] {e}")
@@ -33,6 +34,17 @@ def receive_messages(client_socket):
 def main():
     # Buat socket UDP
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    # Bind ke IP dan port tertentu jika diberikan via argumen
+    if len(sys.argv) >= 3:
+        bind_ip = sys.argv[1]
+        bind_port = int(sys.argv[2])
+        client.bind((bind_ip, bind_port))
+        print(f"[INFO] Client bind ke {bind_ip}:{bind_port}")
+    elif len(sys.argv) == 2:
+        bind_ip = sys.argv[1]
+        client.bind((bind_ip, 0))  # Port otomatis
+        print(f"[INFO] Client bind ke {bind_ip} (port otomatis)")
 
     # Minta nama user
     username = input("Masukkan nama Anda: ").strip()
